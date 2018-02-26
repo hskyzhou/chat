@@ -13,7 +13,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'chat', 'as' => "chat.", 'names
 	/*初始化用户基础数据---比如绑定用户id，加入组*/
 	$router->group(['prefix' => 'init', 'as' => "init."], function($router) {
 		$router->get('index', [
-			'uses' => 'InitController@init',
+			'uses' => 'InitController@index',
 			'as' => 'index'
 		]);
 	});
