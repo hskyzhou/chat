@@ -1,0 +1,21 @@
+{
+    "name": "hskyzhou/chat",
+    "description": "chat",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "hskyzhou",
+            "email": "xezw211@126.com"
+        }
+    ],
+    "require": {
+        "workerman/gatewayclient": "^3.0"
+    },
+    "extra" : {
+        "laravel" : {
+            "providers" : [
+                "HskyZhou\\Chat\\ServiceProvider"
+            ]
+        }
+    }
+}
