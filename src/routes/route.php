@@ -5,7 +5,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'chat', 'as' => "chat.", 'names
 	$router->group(['prefix' => 'index', 'as' => "index."], function($router) {
 		/*获取个人信息，用户朋友，用户组*/
 		$router->get('index', [
-			'uses' => 'InitController@index',
+			'uses' => 'IndexController@index',
 			'as' => 'index'
 		]);
 	});
