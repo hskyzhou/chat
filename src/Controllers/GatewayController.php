@@ -75,11 +75,11 @@ class GatewayController extends Controller
   		$sendContent = json_encode($sendData);
 
   		/*接受的id*/
-		$toId = $data['to']['uid'];
+		$toId = $data['to']['id'];
 
     	switch( $type ) {
     		case 'friend' :
-		    	GateWay::sendToUid($toUid, $sendContent);
+		    	GateWay::sendToUid($toId, $sendContent);
     			break;
     		case 'group' :
 		    	GateWay::sendToGroup($toId, $sendContent);

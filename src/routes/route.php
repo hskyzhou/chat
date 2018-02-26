@@ -34,7 +34,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'chat', 'as' => "chat.", 'names
 		]);
 		
 		/*发送消息*/
-		$router->get('send', [
+		$router->post('send', [
 			'uses' => 'GatewayController@send',
 			'as' => 'send'
 		]);
