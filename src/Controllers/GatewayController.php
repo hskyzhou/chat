@@ -16,41 +16,6 @@ class GatewayController extends Controller
 		Gateway::$registerAddress = config('chat.address');
 	}
 
-	/**
-	 * 绑定
-	 * @return [type] [description]
-	 */
-    public function bind()
-    {
-    	/*当前登录用户id*/
-        if( $user = auth()->user() ) {
-            $uid = $user->id;
-
-            /*socket的客户id*/
-            $clientId = request('client_id', '');
-
-            /*绑定uid和客户id*/
-            if( Gateway::bindUid($clientId, $uid) ) {
-                /*绑定组*/
-                $data = [
-                    'result' => true,
-                    'message' => '绑定成功'
-                ];
-            } else {
-                $data = [
-                    'result' => false,
-                    'message' => '绑定失败'
-                ];
-            }
-        } else {
-            $data = [
-              'result' => false,
-              'message' => '请先登录',
-            ];
-        }
-        return response()->json($data);
-    }
-
     public function send()
     {
     	/*发送的消息*/

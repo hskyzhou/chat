@@ -5,6 +5,8 @@ namespace HskyZhou\Chat\Controllers;
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use App\User;
+use Exception;
+use GatewayClient\Gateway;
 
 class InitController extends Controller
 {
@@ -12,57 +14,55 @@ class InitController extends Controller
 
 	public function index()
     {
-    	/*当前用户*/
-    	$user = auth()->user();
+        try {
+            $user = auth()->user();
 
-    	/*个人信息*/
-    	$mine = [];
-    	/*朋友信息*/
-    	$friends = [];
+            if( $user ) {
+                /*绑定用户id和cliend_id*/
+                $this->bind($user);
 
-    	if( $user ) {
-
-	    	$userFriends = $user->friends;
-	    	if( $userFriends->isNotEmpty() ) {
-	    		foreach( $userFriends as $userFriend ) {
-	    			$friendGroupId = $userFriend->pivot->friend_group_id;
-	    			if( !isset($friends[$friendGroupId]) ) {
-	    				$friends[$friendGroupId]['id'] = $friendGroupId;
-	    				$friends[$friendGroupId]['groupname'] = $friendGroupId;
-	    			}
-	    			/*朋友信息*/
-					$friends[$friendGroupId]['list'][] = $this->userShowInfo($userFriend);;
-	    		}
-	    	}
-
-	    	$mine = $this->userShowInfo($user);
-    	} else {
-    		$mine = User::make([
-    			'name' => '<a href="">请先登录</>',
-    			'email' => '',
-    		]);
-    	}
-
-    	$data = [
-			'code' => 0,
-			'msg' => "",
-			'data' => [
-				'mine' => $mine,
-				'friend' => $friends
-			]
-		];
-
-		return response()->json($data);	
+                /*用户初始化已加入的组*/
+                $this->join($user, $clientId);
+            } else {
+                throw new Exception("请先登录", 2);
+            }
+        } catch (Exception $e) {
+            
+        }
     }
 
-    private function userShowInfo($user)
+    /**
+     * 绑定
+     * @return [type] [description]
+     */
+    private function bind($user)
     {
-    	return [
-    		'username' => $user->name,
-    		'id' => isset($user->id) ? $user->id : 0,
-    		'avatar' => "//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg",
-    		'sign' => $user->email,
-    		'status' => "online"
-    	];
+        $uid = $user->id;
+
+        /*socket的客户id*/
+        $clientId = request('client_id', '');
+
+        /*绑定uid和客户id*/
+        if( Gateway::bindUid($clientId, $uid) ) {
+            return true;
+        } else {
+            throw new Exception("绑定失败", 2);
+        }
+    }
+
+    /**
+     * 初始化用户加入组
+     * @param  [type] $user [description]
+     * @return [type]       [description]
+     */
+    private function join($user, $clientId)
+    {
+        $groups = $user->groups;
+
+        if( $groups->isNotEmpty() ) {
+            foreach( $groups as $group ) {
+                Gateway::joinGroup($clientId, $group->id);
+            }
+        }
     }
 }

@@ -71,5 +71,8 @@ class CreateUserFriendsTable extends Migration
 	public function down()
 	{
 		Schema::dropIfExists('user_friend_groups');
+		Schema::dropIfExists('friend_groups');
+		Schema::dropIfExists('user_groups');
+		Schema::dropIfExists('groups');
 	}
 }
