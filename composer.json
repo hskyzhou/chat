@@ -17,5 +17,10 @@
                 "HskyZhou\\Chat\\ServiceProvider"
             ]
         }
+    },
+    "autoload": {
+        "psr-4": {
+            "HskyZhou\\Chat\\": "src/"
+        }
     }
 }
