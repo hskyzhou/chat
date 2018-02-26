@@ -23,27 +23,32 @@ class GatewayController extends Controller
     public function bind()
     {
     	/*当前登录用户id*/
-    	$user = auth()->user();
-    	$uid = $user->id;
+        if( $user = auth()->user() ) {
+            $uid = $user->id;
 
-    	/*socket的客户id*/
-    	$clientId = request('client_id', '');
+            /*socket的客户id*/
+            $clientId = request('client_id', '');
 
-    	/*绑定uid和客户id*/
-    	if( Gateway::bindUid($clientId, $uid) ) {
-    		/*绑定组*/
-    		$data = [
-    			'result' => true,
-    			'message' => '绑定成功'
-    		];
-    	} else {
-    		$data = [
-    			'result' => true,
-    			'message' => '绑定失败'
-    		];
-    	}
-
-    	return response()->json($data);
+            /*绑定uid和客户id*/
+            if( Gateway::bindUid($clientId, $uid) ) {
+                /*绑定组*/
+                $data = [
+                    'result' => true,
+                    'message' => '绑定成功'
+                ];
+            } else {
+                $data = [
+                    'result' => false,
+                    'message' => '绑定失败'
+                ];
+            }
+        } else {
+            $data = [
+              'result' => false,
+              'message' => '请先登录',
+            ];
+        }
+        return response()->json($data);
     }
 
     public function send()
