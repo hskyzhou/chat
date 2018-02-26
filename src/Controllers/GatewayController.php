@@ -27,7 +27,6 @@ class GatewayController extends Controller
   		$sendData = [
   			'username' => $data['mine']['username'],
   			'avatar' => $data['mine']['avatar'],
-  			'id' => $data['mine']['id'],
   			'type' => $data['to']['type'],
   			'content' => $data['mine']['content'],
   			'cid' => 0,
@@ -37,16 +36,23 @@ class GatewayController extends Controller
   			'emit' => 'message',
   		];
 
-  		$sendContent = json_encode($sendData);
 
-  		/*接受的id*/
-		$toId = $data['to']['id'];
+        /*接受的id*/
+        $toId = $data['to']['id'];
 
-    	switch( $type ) {
-    		case 'friend' :
+        switch( $type ) {
+            case 'friend' :
+                $sendData = array_merge($sendData, [
+                    'id' => $data['mine']['id'],
+                ]);
+          		$sendContent = json_encode($sendData);
 		    	GateWay::sendToUid($toId, $sendContent);
     			break;
     		case 'group' :
+                $sendData = array_merge($sendData, [
+                  'id' => $data['to']['id'],
+                ]);
+                $sendContent = json_encode($sendData);
 		    	GateWay::sendToGroup($toId, $sendContent);
     			break;
     	}
