@@ -19,9 +19,11 @@ class IndexController extends Controller
     	$mine = [];
     	/*朋友信息*/
     	$friends = [];
+        /*参与的组*/
+        $groups = [];
 
     	if( $user ) {
-
+            /*用户朋友*/
 	    	$userFriends = $user->friends;
 	    	if( $userFriends->isNotEmpty() ) {
 	    		foreach( $userFriends as $userFriend ) {
@@ -34,6 +36,14 @@ class IndexController extends Controller
 					$friends[$friendGroupId]['list'][] = $this->userShowInfo($userFriend);;
 	    		}
 	    	}
+
+            /*用户组*/
+            $userGroups = $user->groups;
+            if( $userGroups->isNotEmpty() ) {
+                foreach( $userGroups as $userGroup ) {
+                    $groups[] = $this->groupShowInfo($userGroup);
+                }
+            }
 
 	    	$mine = $this->userShowInfo($user);
     	} else {
@@ -48,7 +58,8 @@ class IndexController extends Controller
 			'msg' => "",
 			'data' => [
 				'mine' => $mine,
-				'friend' => $friends
+				'friend' => $friends,
+                'group' => $groups,
 			]
 		];
 
@@ -60,9 +71,18 @@ class IndexController extends Controller
     	return [
     		'username' => $user->name,
     		'id' => isset($user->id) ? $user->id : 0,
-    		'avatar' => "//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg",
+    		'avatar' => $user->id,
     		'sign' => $user->email,
     		'status' => "online"
     	];
+    }
+
+    private function groupShowInfo($group)
+    {
+        return [
+            "groupname" => $group->name,
+            "id" => $group->id,
+            "avatar" => $group->id,
+        ];
     }
 }
