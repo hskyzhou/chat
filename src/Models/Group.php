@@ -14,4 +14,14 @@ class Group extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function users()
+    {
+    	return $this->belongsToMany(\App\User::class, 'user_groups', 'group_id', 'user_id');
+    }
+
+    public function chatlogs()
+    {
+        return $this->hasMany(ChatLog::class, 'type_id', 'id')->where('type', 'group');
+    }
 }

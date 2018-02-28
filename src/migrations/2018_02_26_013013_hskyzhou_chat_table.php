@@ -59,6 +59,17 @@ class CreateUserFriendsTable extends Migration
 		Schema::create('groups', function(Blueprint $table) {
 			$table->integer('id');
 			$table->string('name')->nullable()->default('')->comment('分组名称');
+			$table->string('avatar')->nullable()->default('')->comment('分组头像');
+            $table->timestamps();
+		});
+
+		/*聊天记录*/
+		Schema::create('chat_logs', function(Blueprint $table) {
+			$table->integer('id');
+			$table->string('type')->nullable()->default('friend')->comment('消息类型');
+			$table->integer('type_id')->nullable()->default(0)->comment('实际为friend_id或者group_id,具体按照type的来');
+			$table->integer('from_id')->nullable()->default(0)->comment('分组头像');
+			$table->text('content')->nullable()->comment('发送的内容');
             $table->timestamps();
 		});
 	}
@@ -74,5 +85,6 @@ class CreateUserFriendsTable extends Migration
 		Schema::dropIfExists('friend_groups');
 		Schema::dropIfExists('user_groups');
 		Schema::dropIfExists('groups');
+		Schema::dropIfExists('chat_logs');
 	}
 }

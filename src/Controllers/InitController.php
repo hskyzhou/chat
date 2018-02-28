@@ -15,11 +15,19 @@ class InitController extends Controller
 	public function index()
     {
         try {
+            $data = [
+                'result' => true,
+                'message' => '操作成功',
+            ];
+
             $user = auth()->user();
+
+            /*socket的客户id*/
+            $clientId = request('client_id', '');
 
             if( $user ) {
                 /*绑定用户id和cliend_id*/
-                $this->bind($user);
+                $this->bind($user, $clientId);
 
                 /*用户初始化已加入的组*/
                 $this->join($user, $clientId);
@@ -27,20 +35,22 @@ class InitController extends Controller
                 throw new Exception("请先登录", 2);
             }
         } catch (Exception $e) {
-            
+            $data = [
+                'result' => false,
+                'message' => $e->getMessage(),
+            ];
         }
+
+        return response()->json($data);
     }
 
     /**
      * 绑定
      * @return [type] [description]
      */
-    private function bind($user)
+    private function bind($user, $clientId)
     {
         $uid = $user->id;
-
-        /*socket的客户id*/
-        $clientId = request('client_id', '');
 
         /*绑定uid和客户id*/
         if( Gateway::bindUid($clientId, $uid) ) {

@@ -41,4 +41,20 @@ Route::group(['middleware' => 'web', 'prefix' => 'chat', 'as' => "chat.", 'names
 			'as' => 'send'
 		]);
 	});
+
+	/*查看成员*/
+	$router->group(['prefix' => 'member', 'as' => "member."], function($router) {
+		$router->get('index', [
+			'uses' => 'MemberController@index',
+			'as' => 'index'
+		]);
+	});
+
+	/*查看成员*/
+	$router->group(['prefix' => 'chatlog', 'as' => "chatlog."], function($router) {
+		$router->get('index', [
+			'uses' => 'ChatlogController@index',
+			'as' => 'index'
+		]);
+	});
 });

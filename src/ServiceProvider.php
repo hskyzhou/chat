@@ -24,5 +24,12 @@ class ServiceProvider extends BaseServiceProvider
 
 		/*加载数据库迁移文件*/
 		$this->loadMigrationsFrom(__DIR__ . '/migrations');
+
+		/*加载视图*/
+		$this->loadViewsFrom(__DIR__.'/views', 'hskychat');
+
+		$this->publishes([
+	        __DIR__.'/views/' => resource_path('views/vendor/hskychat'),
+	    ]);
 	}
 }

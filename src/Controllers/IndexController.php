@@ -47,10 +47,8 @@ class IndexController extends Controller
 
 	    	$mine = $this->userShowInfo($user);
     	} else {
-    		$mine = User::make([
-    			'name' => '<a href="">请先登录</>',
-    			'email' => '',
-    		]);
+    		$mine = User::make([]);
+            $mine->username = '<a href="'.route('login').'">请先登录</a>';
     	}
 
     	$data = [
@@ -71,8 +69,8 @@ class IndexController extends Controller
     	return [
     		'username' => $user->name,
     		'id' => isset($user->id) ? $user->id : 0,
-    		'avatar' => $user->id,
-    		'sign' => $user->email,
+    		'avatar' => $user->avatar,
+    		'sign' => $user->sign,
     		'status' => "online"
     	];
     }
@@ -82,7 +80,7 @@ class IndexController extends Controller
         return [
             "groupname" => $group->name,
             "id" => $group->id,
-            "avatar" => $group->id,
+            "avatar" => $group->avatar,
         ];
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use App\User;
 use GatewayClient\Gateway;
+use HskyZhou\Chat\Models\ChatLog;
 
 class GatewayController extends Controller
 {
@@ -36,31 +37,46 @@ class GatewayController extends Controller
   			'emit' => 'message',
   		];
 
-
         /*接受的id*/
         $toId = $data['to']['id'];
 
-        switch( $type ) {
-            case 'friend' :
-                $sendData = array_merge($sendData, [
-                    'id' => $data['mine']['id'],
-                ]);
-          		$sendContent = json_encode($sendData);
-		    	GateWay::sendToUid($toId, $sendContent);
-    			break;
-    		case 'group' :
-                $sendData = array_merge($sendData, [
-                  'id' => $data['to']['id'],
-                ]);
-                $sendContent = json_encode($sendData);
-		    	GateWay::sendToGroup($toId, $sendContent);
-    			break;
-    	}
+        /*存入数据库*/
+        $chatlogData = [
+            'type' => $type,
+            'type_id' => $toId,
+            'from_id' => $data['mine']['id'],
+            'content' => $data['mine']['content'],
+        ];
 
-    	$data = [
-  			'result' => true,
-  			'message' => '发送成功'
-  		];
+        if( ChatLog::create($chatlogData) ) {
+            switch( $type ) {
+                case 'friend' :
+                    $sendData = array_merge($sendData, [
+                        'id' => $data['mine']['id'],
+                    ]);
+              		$sendContent = json_encode($sendData);
+    		    	GateWay::sendToUid($toId, $sendContent);
+        			break;
+        		case 'group' :
+                    $sendData = array_merge($sendData, [
+                      'id' => $data['to']['id'],
+                    ]);
+                    $sendContent = json_encode($sendData);
+    		    	GateWay::sendToGroup($toId, $sendContent);
+        			break;
+        	}
+
+        	$data = [
+      			'result' => true,
+      			'message' => '发送成功'
+      		];
+        } else {
+            $data = [
+                'result' => false,
+                'message' => '发送失败'
+            ];
+        }
+
 
         return response()->json($data);
     }
