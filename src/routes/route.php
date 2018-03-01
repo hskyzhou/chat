@@ -1,6 +1,6 @@
 <?php 
 
-Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'chat', 'as' => "chat.", 'namespace' => 'HskyZhou\Chat\Controllers'], function($router) {
+Route::group(['middleware' => ['web'], 'prefix' => 'chat', 'as' => "chat.", 'namespace' => 'HskyZhou\Chat\Controllers'], function($router) {
 	/*默认用户相关数据*/
 	$router->group(['prefix' => 'index', 'as' => "index."], function($router) {
 		/*获取个人信息，用户朋友，用户组*/
@@ -62,6 +62,14 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'chat', 'as' => "chat
 	$router->group(['prefix' => 'sign', 'as' => "sign."], function($router) {
 		$router->post('save', [
 			'uses' => 'SignController@save',
+			'as' => 'save'
+		]);
+	});
+
+	/*背景麸皮控制器*/
+	$router->group(['prefix' => 'skin', 'as' => "skin."], function($router) {
+		$router->post('save', [
+			'uses' => 'SkinController@save',
 			'as' => 'save'
 		]);
 	});
