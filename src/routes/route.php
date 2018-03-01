@@ -57,4 +57,12 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'chat', 'as' => "chat
 			'as' => 'index'
 		]);
 	});
+
+	/*签名控制器*/
+	$router->group(['prefix' => 'sign', 'as' => "sign."], function($router) {
+		$router->post('save', [
+			'uses' => 'SignController@save',
+			'as' => 'save'
+		]);
+	});
 });
