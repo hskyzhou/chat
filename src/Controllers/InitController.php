@@ -32,7 +32,7 @@ class InitController extends Controller
 
             if( $user ) {
                 /*绑定用户id和cliend_id*/
-                Gateway::bindUid($clientId, $uid);
+                Gateway::bindUid($clientId, $user->id);
 
                 /*用户初始化已加入的组*/
                 $this->join($user, $clientId);
