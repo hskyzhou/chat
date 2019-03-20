@@ -30,6 +30,7 @@ class ServiceProvider extends BaseServiceProvider
 
 		$this->publishes([
 	        __DIR__.'/views/' => resource_path('views/vendor/hskychat'),
+	        __DIR__.'/migrations/' => database_path('migrations'),
 	    ]);
 	}
 }

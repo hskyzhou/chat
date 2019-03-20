@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 /**
  * Class CreateUserFriendsTable.
  */
-class CreateUserFriendsTable extends Migration
+class HskyzhouChatTable extends Migration
 {
 	/**
 	 * Run the migrations.
@@ -15,62 +15,53 @@ class CreateUserFriendsTable extends Migration
 	 */
 	public function up()
 	{
-		/*用户朋友表*/
-		Schema::create('user_friend_groups', function(Blueprint $table) {
-            $table->unsignedInteger('user_id')->nullable()->default(0)->comment('用户id');
-            $table->unsignedInteger('friend_user_id')->nullable()->default(0)->comment('朋友的用户id');
-            $table->integer('friend_group_id')->nullable()->default(0)->comment('朋友分组id');
-
-            $table->foreign('user_id')->references('id')->on('users')
-                ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->foreign('friend_user_id')->references('id')->on('users')
-                ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->timestamps();
-
-            $table->primary(['user_id', 'friend_user_id']);
-		});
-
-		/*朋友分组表*/
+		/*朋友群组*/
 		Schema::create('friend_groups', function(Blueprint $table) {
-			$table->integer('id');
-			$table->string('name')->nullable()->default('')->comment('分组名称');
-            $table->timestamps();
+			$table->increments('id');
+			$table->string('name')->nullable()->default('')->comment('朋友群组名称');
+			$table->unsignedInteger('user_id')->nullable()->default(0)->comment("用户id");
+			/*添加外键*/
+			$table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+			$table->timestamps();
 		});
 
-		/*用户群组*/
-		Schema::create('user_groups', function(Blueprint $table) {
-			$table->unsignedInteger('user_id')->nullable()->default(0)->comment('用户id');
-            $table->integer('group_id')->nullable()->default(0)->comment('群组id');
-
-            $table->foreign('user_id')->references('id')->on('users')
-                ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->foreign('group_id')->references('id')->on('groups')
-                ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->timestamps();
-
-            $table->primary(['user_id', 'group_id']);
+		/*用户好友表*/
+		Schema::create('friends', function(Blueprint $table) {
+			$table->unsignedInteger('user_id')->nullable()->default(0)->comment('用户id，添加者');
+			$table->unsignedInteger('friend_id')->nullable()->default(0)->comment('用户好友id,接受者');
+			$table->unsignedInteger('friend_group_id')->nullable()->default(0)->comment('好友所属群组');
+			/*添加外键*/
+			$table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('friend_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+			$table->timestamps();
 		});
 
-		/*群组*/
-		Schema::create('groups', function(Blueprint $table) {
-			$table->integer('id');
-			$table->string('name')->nullable()->default('')->comment('分组名称');
-			$table->string('avatar')->nullable()->default('')->comment('分组头像');
-            $table->timestamps();
+		/*用户好友间消息*/
+		Schema::create('friend_messages', function(Blueprint $table) {
+			$table->unsignedInteger('user_id')->nullable()->default(0)->comment('用户id，添加者');
+			$table->unsignedInteger('friend_id')->nullable()->default(0)->comment('用户好友id,接受者');
+			/*添加外键*/
+			$table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('friend_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
+			$table->text('content')->comment("消息内容");
+			$table->tinyInteger('is_read')->default(2)->comment("是否已读, 1-已读，2-未读");
+			$table->timestamps();
 		});
 
-		/*聊天记录*/
-		Schema::create('chat_logs', function(Blueprint $table) {
-			$table->integer('id');
-			$table->string('type')->nullable()->default('friend')->comment('消息类型');
-			$table->integer('type_id')->nullable()->default(0)->comment('实际为friend_id或者group_id,具体按照type的来');
-			$table->integer('from_id')->nullable()->default(0)->comment('分组头像');
-			$table->text('content')->nullable()->comment('发送的内容');
-            $table->timestamps();
+		/*用户申请好友*/
+		Schema::create('friend_applies', function(Blueprint $table) {
+			$table->increments('id')->comment('自增长id');
+			$table->unsignedInteger('user_id')->nullable()->default(0)->comment('用户id，添加者');
+			$table->unsignedInteger('friend_id')->nullable()->default(0)->comment('用户好友id,接受者');
+			$table->text('remark')->nullable()->comment('申请内容');
+			$table->string('friend_group_id')->nullable()->default(0)->comment('好友所属群组');
+			/*添加外键*/
+			$table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+			$table->foreign('friend_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
+			$table->tinyInteger('is_agree')->nullable()->default(3)->comment("是否接受好友,1-同意,2-不同意, 3-初始值");
+			$table->timestamps();
 		});
 	}
 
@@ -81,10 +72,9 @@ class CreateUserFriendsTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('user_friend_groups');
 		Schema::dropIfExists('friend_groups');
-		Schema::dropIfExists('user_groups');
-		Schema::dropIfExists('groups');
-		Schema::dropIfExists('chat_logs');
+		Schema::dropIfExists('friends');
+		Schema::dropIfExists('friend_messages');
+		Schema::dropIfExists('friend_applies');
 	}
 }

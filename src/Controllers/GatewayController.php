@@ -6,7 +6,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use App\User;
 use GatewayClient\Gateway;
-use HskyZhou\Chat\Models\ChatLog;
+use HskyZhou\Chat\Models\FriendMessage;
 
 class GatewayController extends Controller
 {
@@ -14,7 +14,7 @@ class GatewayController extends Controller
 
 	public function __construct()
 	{
-		Gateway::$registerAddress = config('chat.address');
+		Gateway::$registerAddress = config('chat.register_address');
 	}
 
     public function send()
@@ -43,12 +43,12 @@ class GatewayController extends Controller
         /*存入数据库*/
         $chatlogData = [
             'type' => $type,
-            'type_id' => $toId,
-            'from_id' => $data['mine']['id'],
+            'friend_id' => $toId,
+            'user_id' => $data['mine']['id'],
             'content' => $data['mine']['content'],
         ];
 
-        if( ChatLog::create($chatlogData) ) {
+        if( FriendMessage::create($chatlogData) ) {
             switch( $type ) {
                 case 'friend' :
                     $sendData = array_merge($sendData, [

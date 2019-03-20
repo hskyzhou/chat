@@ -12,6 +12,6 @@ class FriendGroup extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
+        'name', 'user_id'
     ];
 }

@@ -20,9 +20,21 @@ Route::group(['middleware' => ['web'], 'prefix' => 'chat', 'as' => "chat.", 'nam
 
 	$router->group(['prefix' => 'friend', 'as' => "friend."], function($router) {
 		/*添加朋友*/
-		$router->get('add', [
-			'uses' => 'FriendController@add',
-			'as' => 'add'
+		$router->post('apply', [
+			'uses' => 'FriendController@apply',
+			'as' => 'apply'
+		]);
+
+		/*同意添加*/
+		$router->post('agree', [
+			'uses' => 'FriendController@agree',
+			'as' => 'agree'
+		]);
+
+		/*拒绝添加*/
+		$router->post('reject', [
+			'uses' => 'FriendController@reject',
+			'as' => 'reject'
 		]);
 	});
 
@@ -71,6 +83,22 @@ Route::group(['middleware' => ['web'], 'prefix' => 'chat', 'as' => "chat.", 'nam
 		$router->post('save', [
 			'uses' => 'SkinController@save',
 			'as' => 'save'
+		]);
+	});
+
+	/*消息盒子*/
+	$router->group(['prefix' => 'msgbox', 'as' => "msgbox."], function($router) {
+		$router->get('index', [
+			'uses' => 'MsgboxController@index',
+			'as' => 'index'
+		]);
+	});
+
+	/*查找好友*/
+	$router->group(['prefix' => 'find', 'as' => "find."], function($router) {
+		$router->get('index', [
+			'uses' => 'FindController@index',
+			'as' => 'index'
 		]);
 	});
 });

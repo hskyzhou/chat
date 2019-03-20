@@ -12,6 +12,11 @@ class InitController extends Controller
 {
 	use ValidatesRequests;
 
+    public function __construct()
+    {
+        Gateway::$registerAddress = config('chat.register_address');
+    }
+
 	public function index()
     {
         try {
@@ -67,12 +72,12 @@ class InitController extends Controller
      */
     private function join($user, $clientId)
     {
-        $groups = $user->groups;
+        // $groups = $user->groups;
 
-        if( $groups->isNotEmpty() ) {
-            foreach( $groups as $group ) {
-                Gateway::joinGroup($clientId, $group->id);
-            }
-        }
+        // if( $groups->isNotEmpty() ) {
+        //     foreach( $groups as $group ) {
+        //         Gateway::joinGroup($clientId, $group->id);
+        //     }
+        // }
     }
 }

@@ -5,7 +5,8 @@ namespace HskyZhou\Chat\Controllers;
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use App\User;
-use Exception;
+use HskyZhou\Chat\Exceptions\ChatErrorException;
+use DB;
 
 class SkinController extends Controller
 {
@@ -14,23 +15,18 @@ class SkinController extends Controller
     public function save()
     {
         $data = [
-            'result' => false,
-            'message' => '保存背景失败',
+            'result' => true,
+            'message' => '保存背景成功',
         ];
 
-        try {
+        DB::transaction(function () {
             $user = auth()->user();
 
             $user->init_skin = request('skin', '');
-            if( $user->save() ) {
-                $data = [
-                    'result' => true,
-                    'message' => '保存背景成功',
-                ];
+            if( !$user->save() ) {
+                throw new ChatErrorException("切换皮肤失败");
             }
-        } catch (Exception $e) {
-            
-        }
+        });
 
         return response()->json($data);
     }

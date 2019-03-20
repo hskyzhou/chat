@@ -25,25 +25,36 @@ class IndexController extends Controller
     	if( $user ) {
             /*用户朋友*/
 	    	$userFriends = $user->friends;
+            /*朋友群组*/
+            $friendGroups = $user->friendGroups->keyBy('id');
+
+            if ($friendGroups->isNotEmpty()) {
+                foreach ($friendGroups as $friendGroup) {
+                    $friends[$friendGroup->id]['id'] = $friendGroup->id;
+                    $friends[$friendGroup->id]['groupname'] = $friendGroup->name;
+                    $friends[$friendGroup->id]['list'] = [];
+                }
+            }
+
 	    	if( $userFriends->isNotEmpty() ) {
 	    		foreach( $userFriends as $userFriend ) {
 	    			$friendGroupId = $userFriend->pivot->friend_group_id;
-	    			if( !isset($friends[$friendGroupId]) ) {
+
+                    $friendGroup = $friendGroups->get($friendGroupId);
+
+	    			if ($friendGroup) {
 	    				$friends[$friendGroupId]['id'] = $friendGroupId;
-	    				$friends[$friendGroupId]['groupname'] = $friendGroupId;
+	    				$friends[$friendGroupId]['groupname'] = $friendGroup->name;
 	    			}
 	    			/*朋友信息*/
 					$friends[$friendGroupId]['list'][] = $this->userShowInfo($userFriend);;
 	    		}
 	    	}
 
+            $friends = array_values($friends);
+
             /*用户组*/
-            $userGroups = $user->groups;
-            if( $userGroups->isNotEmpty() ) {
-                foreach( $userGroups as $userGroup ) {
-                    $groups[] = $this->groupShowInfo($userGroup);
-                }
-            }
+            $groups = [];
 
 	    	$mine = $this->userShowInfo($user);
     	} else {
