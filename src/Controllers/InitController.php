@@ -32,7 +32,7 @@ class InitController extends Controller
 
             if( $user ) {
                 /*绑定用户id和cliend_id*/
-                $this->bind($user, $clientId);
+                Gateway::bindUid($clientId, $uid);
 
                 /*用户初始化已加入的组*/
                 $this->join($user, $clientId);
@@ -47,22 +47,6 @@ class InitController extends Controller
         }
 
         return response()->json($data);
-    }
-
-    /**
-     * 绑定
-     * @return [type] [description]
-     */
-    private function bind($user, $clientId)
-    {
-        $uid = $user->id;
-
-        /*绑定uid和客户id*/
-        if( Gateway::bindUid($clientId, $uid) ) {
-            return true;
-        } else {
-            throw new Exception("绑定失败", 2);
-        }
     }
 
     /**
